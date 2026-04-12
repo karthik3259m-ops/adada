@@ -1,14 +1,13 @@
-name: Batch PDF Scraper
+name: Adda247 PDF Batch Scraper
 
 on:
   schedule:
-    - cron: '0 0 * * 0' # Weekly run
-  workflow_dispatch: # Allows you to click "Run workflow" manually
+    - cron: '0 0 * * 0' # Runs weekly
+  workflow_dispatch: # Manual trigger
 
 jobs:
   scrape_and_push:
     runs-on: ubuntu-latest
-    # Added permissions to ensure the bot can write to the repo
     permissions:
       contents: write
 
@@ -19,23 +18,27 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.10'
 
     - name: Install Dependencies
       run: pip install requests beautifulsoup4
 
-    - name: Run Scraper (Batch of 80)
+    - name: Run Scraper
       run: python scraper.py
 
-    - name: Commit and Push Batch
+    - name: Commit and Push
       run: |
         git config --global user.name "Karthikeyan-Bot"
         git config --global user.email "actions@github.com"
+        
+        # Ensure directory is tracked
+        mkdir -p Longinsent_Archive
         git add Longinsent_Archive/
-        # Only commit if there are actually new files
-        if git diff --staged --quiet; then
-          echo "No new files to upload."
-        else
-          git commit -m "Automated Batch Upload: 80 PDF Files"
+        
+        # Check if there are changes to commit
+        if [ -n "$(git status --porcelain)" ]; then
+          git commit -m "Adda247 Batch: Added new PDF materials"
           git push origin main
+        else
+          echo "No changes to commit."
         fi
