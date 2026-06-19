@@ -1,8 +1,7 @@
 name: Adda247 Full Crawler
 
 on:
-  schedule:
-    - cron: '0 0 * * 0' # Weekly
+ # Weekly
   workflow_dispatch: 
 
 jobs:
